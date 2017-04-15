@@ -10,7 +10,7 @@ add_definitions(${GTK3_CFLAGS_OTHER})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-attributes")
 
-file(GLOB_RECURSE RES_FILES src/res/*)
+set(RES_FILES src/res/default.htm src/res/ui.tis)
 
 add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/src/resources.h
         COMMAND ${PROJECT_SOURCE_DIR}/pack-resources.sh ${PROJECT_SOURCE_DIR}
