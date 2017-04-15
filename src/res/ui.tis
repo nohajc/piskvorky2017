@@ -2,11 +2,12 @@ const body = $(body);
 
 function cellHandlerFactory(x, y) {
     return function() {
-        view.ui_click(x, y);
+        stdout.println("Called click handler");
+        view.uiClick(x, y);
     }
 }
 
-function generateBoard(n) {
+function generateGrid(n) {
     for (var y = 0; y < n; y++) {
         var row = $(#board).$append(<tr></tr>);
         for (var x = 0; x < n; x++) {
@@ -21,12 +22,12 @@ function generateBoard(n) {
     view.move( sx + (sw - dim) / 2, sy + (sh - dim) / 2, dim, dim);
 }
 
-self.ready = function() // html loaded - DOM ready
-{
-    // positioning the window in the middle of the screen:
-    // var (sx,sy,sw,sh) = view.screenBox(#workarea,#rectw); // getting screen/monitor size
-    // var (w,h) = body.box(#dimension);
-    // view.move( sx + (sw - w) / 2, sy + (sh - h) / 2, w, h);
-
-    generateBoard(5);
+function updateGrid(x, y, mark) {
+    // TODO: make td cells accessible by their coordinates
+    stdout.println(x);
+    stdout.println(y);
+    stdout.println(mark);
 }
+
+// html loaded - DOM ready
+self.ready = ::generateGrid(view.gridSize());

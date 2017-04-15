@@ -8,7 +8,7 @@ include_directories(${GTK3_INCLUDE_DIRS})
 link_directories(${GTK3_LIBRARY_DIRS})
 add_definitions(${GTK3_CFLAGS_OTHER})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-attributes")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread -Wno-attributes")
 
 set(RES_FILES src/res/default.htm src/res/ui.tis)
 
@@ -16,7 +16,7 @@ add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/src/resources.h
         COMMAND ${PROJECT_SOURCE_DIR}/pack-resources.sh ${PROJECT_SOURCE_DIR}
         DEPENDS ${RES_FILES})
 
-set(SOURCE_FILES src/piskvorky.cpp src/resources.h sciter-sdk/include/sciter-gtk-main.cpp)
+set(SOURCE_FILES src/piskvorky.cpp src/resources.h sciter-sdk/include/sciter-gtk-main.cpp src/Game.cpp src/Game.h src/Player.cpp src/Player.h src/HumanPlayer.cpp src/HumanPlayer.h src/Frame.cpp src/Frame.h)
 
 include_directories(sciter-sdk/include)
 
