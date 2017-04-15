@@ -14,17 +14,11 @@ class HumanPlayer : public Player {
 public:
     // The return value is ignored, we need something else thant 'void' for sciter compatibility
     typedef std::function<bool(int, int)> ClickCallbackFunc;
-    typedef std::function<void(ClickCallbackFunc)> AddOnClickHandlerFunc;
-    typedef std::function<void()> RemoveOnClickHandlerFunc;
-
-    struct EventHandlerRegistration {
-        AddOnClickHandlerFunc addOnClickHandler;
-        RemoveOnClickHandlerFunc removeOnClickHandler;
-    };
+    typedef std::function<void(ClickCallbackFunc)> AddOneClickHandlerFunc;
 private:
-    EventHandlerRegistration evtReg;
+    AddOneClickHandlerFunc addOneClickHandler;
 public:
-    HumanPlayer(EventHandlerRegistration eHndReg);
+    HumanPlayer(AddOneClickHandlerFunc clickHnd);
     virtual Cell proposeMove(const Game & g) const override;
 };
 

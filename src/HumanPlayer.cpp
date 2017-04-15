@@ -11,15 +11,14 @@ Cell HumanPlayer::proposeMove(const Game & g) const {
     std::promise<Cell> promiseCell;
     std::future<Cell> futureCell = promiseCell.get_future();
 
-    evtReg.addOnClickHandler([&promiseCell](int x, int y) {
+    addOneClickHandler([&promiseCell](int x, int y) {
         promiseCell.set_value({x, y});
         return true;
     });
     Cell result = futureCell.get();
 
-    evtReg.removeOnClickHandler();
     return result;
 }
 
-HumanPlayer::HumanPlayer(EventHandlerRegistration eHndReg) : evtReg(eHndReg) {}
+HumanPlayer::HumanPlayer(HumanPlayer::AddOneClickHandlerFunc clickHnd) : addOneClickHandler(clickHnd) {}
 

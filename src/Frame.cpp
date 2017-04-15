@@ -9,16 +9,12 @@ static RECT defaultRect = { 100, 100, 800, 800 };
 
 Frame::Frame() : window( SW_MAIN | SW_TITLEBAR | SW_CONTROLS | SW_ENABLE_DEBUG, defaultRect) {
     // TODO: bind this action to an UI event (main menu click or something)
-    auto addOnClickHnd = [this](HumanPlayer::ClickCallbackFunc callback) {
-        call_function("addOnClickHandler", sciter::vfunc(callback));
+    auto addOneClickHnd = [this](HumanPlayer::ClickCallbackFunc callback) {
+        call_function("addOneClickHandler", sciter::vfunc(callback));
     };
-    auto removeOnClickHnd = [this] {
-        call_function("removeOnClickHandler");
-    };
-    HumanPlayer::EventHandlerRegistration evtReg{addOnClickHnd, removeOnClickHnd};
 
-    std::unique_ptr<Player> p1 = std::make_unique<HumanPlayer>(evtReg);
-    std::unique_ptr<Player> p2 = std::make_unique<HumanPlayer>(evtReg);
+    std::unique_ptr<Player> p1 = std::make_unique<HumanPlayer>(addOneClickHnd);
+    std::unique_ptr<Player> p2 = std::make_unique<HumanPlayer>(addOneClickHnd);
     
     game = std::make_unique<Game>(5, std::move(p1), std::move(p2));
 }

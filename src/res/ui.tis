@@ -29,11 +29,14 @@ function cellHandlerFactory(x, y) {
     }
 }
 
-function addOnClickHandler(func) {
-    onClickCallback = func;
+function addOneClickHandler(func) {
+    onClickCallback = function(x, y) {
+        func(x, y);
+        onClickCallback = null;
+    }
 }
 
-function removeOnClickHandler() {
+function removeOneClickHandler(func) {
     onClickCallback = null;
 }
 
@@ -48,15 +51,16 @@ function generateGrid(n) {
             var cell = row.$append(<td .cell></td>);
             cell.style["width"] = CELL_DIM;
             cell.style["height"] = CELL_DIM;
-            cell.on("click", cellHandlerFactory(x, y));
+            cell.on("mousedown", cellHandlerFactory(x, y));
             gameGrid[y][x] = cell;
         }
     }
 
-    var dim = n * (CELL_DIM + 1) + 1;
+    var width = n * (CELL_DIM + 1) + 1;
+    var height = n * (CELL_DIM + 2) + 1;
 
     var (sx,sy,sw,sh) = view.screenBox(#workarea,#rectw); // getting screen/monitor size
-    view.move( sx + (sw - dim) / 2, sy + (sh - dim) / 2, dim, dim + 5);
+    view.move( sx + (sw - width) / 2, sy + (sh - height) / 2, width, height);
 }
 
 function updateGrid(x, y, markIdx) {
