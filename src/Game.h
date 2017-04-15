@@ -14,6 +14,10 @@
 typedef unsigned long grid_size_t;
 
 class Game {
+public:
+    typedef std::function<void(Cell, Player::marking_t)> UpdateHandlerFunc;
+
+private:
     enum class Marking {EMPTY = 0, NAUGHT = Player::NAUGHT, CROSS = Player::CROSS};
 
     class Grid {
@@ -36,10 +40,10 @@ class Game {
 
     std::unique_ptr<Player> player1, player2;
     Grid grid;
+    unsigned rowLengthToWin;
     bool gameOver;
 
-    typedef std::function<void(Cell, Player::marking_t)> UpdateCallBackFunc;
-    UpdateCallBackFunc updateCallback;
+    UpdateHandlerFunc updateHandler;
 
     // Attempt to do a next move
     // Returns true if the move was made (that means it must also have been valid),
@@ -47,19 +51,16 @@ class Game {
     bool nextMove(const Player & currentPlayer);
     // Update callback (for notifying UI of the last move)
     void update(Cell c) {
-        if (updateCallback) {
-            updateCallback(c, Player::marking_t(grid[c]));
+        if (updateHandler) {
+            updateHandler(c, Player::marking_t(grid[c]));
         }
     }
 public:
-    Game(grid_size_t n, std::unique_ptr<Player> p1, std::unique_ptr<Player> p2);
-    // TODO: give Game access to UI (some wrappers to specific frame::call_function instances)
-    // Then we also want to provide means for HumanPlayer to handle onclick events.
-    // AIPlayer, on the other hand, will need access to Grid cells in order to play.
+    Game(grid_size_t n, std::unique_ptr<Player> p1, std::unique_ptr<Player> p2, unsigned rowLength = 3);
 
     grid_size_t getGridSize() const;
     void play();
-    void setUpdateCallback(UpdateCallBackFunc update);
+    void setUpdateHandler(UpdateHandlerFunc update);
 };
 
 

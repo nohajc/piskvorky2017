@@ -1,33 +1,73 @@
 const body = $(body);
 
+const CELL_DIM = 50;
+
+const Marking = {
+    1: "NAUGHT",
+    2: "CROSS"
+}
+
+const MarkingSym = {
+    NAUGHT: "O",
+    CROSS: "X"
+}
+
+const MarkingColor = {
+    NAUGHT: "blue",
+    CROSS: "red"
+}
+
+var gameGrid = null;
+var onClickCallback = null;
+
+
 function cellHandlerFactory(x, y) {
     return function() {
-        stdout.println("Called click handler");
-        view.uiClick(x, y);
+        if (onClickCallback) {
+            onClickCallback(x, y);
+        }
     }
+}
+
+function addOnClickHandler(func) {
+    onClickCallback = func;
+}
+
+function removeOnClickHandler() {
+    onClickCallback = null;
 }
 
 function generateGrid(n) {
+    gameGrid = new Array(n);
+
     for (var y = 0; y < n; y++) {
+        gameGrid[y] = new Array(n);
+
         var row = $(#board).$append(<tr></tr>);
         for (var x = 0; x < n; x++) {
             var cell = row.$append(<td .cell></td>);
+            cell.style["width"] = CELL_DIM;
+            cell.style["height"] = CELL_DIM;
             cell.on("click", cellHandlerFactory(x, y));
+            gameGrid[y][x] = cell;
         }
     }
 
-    var dim = 50 * n;
+    var dim = n * (CELL_DIM + 1) + 1;
 
     var (sx,sy,sw,sh) = view.screenBox(#workarea,#rectw); // getting screen/monitor size
-    view.move( sx + (sw - dim) / 2, sy + (sh - dim) / 2, dim, dim);
+    view.move( sx + (sw - dim) / 2, sy + (sh - dim) / 2, dim, dim + 5);
 }
 
-function updateGrid(x, y, mark) {
-    // TODO: make td cells accessible by their coordinates
-    stdout.println(x);
-    stdout.println(y);
-    stdout.println(mark);
+function updateGrid(x, y, markIdx) {
+    var mark = Marking[markIdx];
+    var sym = MarkingSym[mark];
+    var color = MarkingColor[mark];
+
+    var cell = gameGrid[y][x];
+    cell.text = sym;
+    cell.style["color"] = color;
 }
 
 // html loaded - DOM ready
-self.ready = ::generateGrid(view.gridSize());
+self.ready = ::generateGrid(view.gridSize()); // TODO: make sure we only call this after Frame::game was initialized

@@ -7,6 +7,11 @@
 
 struct Cell {
     unsigned x, y;
+
+    Cell(int cx, int cy) {
+        x = (unsigned)cx;
+        y = (unsigned)cy;
+    }
 };
 
 class Game;

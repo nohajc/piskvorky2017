@@ -9,9 +9,11 @@
 
 Game::Game(grid_size_t n,
            std::unique_ptr<Player> p1,
-           std::unique_ptr<Player> p2)
-        : player1(std::move(p1)), player2(std::move(p2)), grid(n){
+           std::unique_ptr<Player> p2,
+           unsigned rowLength)
+        : player1(std::move(p1)), player2(std::move(p2)), grid(n) {
     gameOver = false;
+    rowLengthToWin = rowLength;
 
     player1->setMarking(Player::CROSS);
     player2->setMarking(Player::NAUGHT);
@@ -40,6 +42,6 @@ bool Game::nextMove(const Player & currentPlayer) {
     return false;
 }
 
-void Game::setUpdateCallback(UpdateCallBackFunc update) {
-    updateCallback = update;
+void Game::setUpdateHandler(UpdateHandlerFunc update) {
+    updateHandler = update;
 }
