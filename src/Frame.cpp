@@ -19,14 +19,6 @@ Frame::Frame() : window( SW_MAIN | SW_TITLEBAR | SW_CONTROLS | SW_ENABLE_DEBUG, 
     game = std::make_unique<Game>(5, std::move(p1), std::move(p2));
 }
 
-sciter::value Frame::uiClick(sciter::value cur_x, sciter::value cur_y) {
-    int x = cur_x.get<int>();
-    int y = cur_y.get<int>();
-
-    printf("Clicked at %d, %d\n", x, y);
-    return sciter::value();
-}
-
 int Frame::gridSize() {
     return (int)(game ? game->getGridSize() : 0);
 }

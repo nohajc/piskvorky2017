@@ -17,17 +17,31 @@ struct Cell {
         x = cx;
         y = cy;
     }
+
+    Cell() {
+        x = 0;
+        y = 0;
+    }
+
+    bool operator==(const Cell & other) const {
+        return x == other.x && y == other.y;
+    }
+
+    bool operator!=(const Cell & other) const {
+        return !(*this == other);
+    }
 };
 
 class Game;
 
+// TODO: add subclass TestPlayer that plays a predefined set of games
 class Player {
 public:
     enum marking_t {NAUGHT = 1, CROSS = 2};
 
     void setMarking(marking_t m);
     marking_t getMarking() const;
-    virtual Cell proposeMove(const Game & g) const = 0;
+    virtual Cell proposeMove(const Game & g) = 0;
 
 private:
     marking_t marking;

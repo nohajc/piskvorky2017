@@ -34,12 +34,15 @@ void Game::play() {
     printf("GAME OVER\n");
 }
 
-bool Game::nextMove(const Player & currentPlayer) {
+bool Game::nextMove(Player & currentPlayer) {
     Cell c = currentPlayer.proposeMove(*this);
     if (grid[c] == Marking::EMPTY) {
         grid[c] = Marking(currentPlayer.getMarking());
         update(c);
         gameOver = checkVictory(c);
+        if (gameOver) {
+            winningMove = c;
+        }
         return true;
     }
     return false;
@@ -64,6 +67,7 @@ bool Game::checkVictory(Cell c) const {
 //    printf("c.x = %u, c.y = %u, leftX = %d, rightX = %d, topY = %d, bottomY = %d\n",
 //           c.x, c.y, leftX, rightX, topY, bottomY);
 
+    // TODO: move bound checking to Grid, unify interface (row_at, col_at, ...)
     auto left = std::next(grid.row_begin(c.y), boundCheck(leftX));
     auto right = std::next(grid.row_begin(c.y), boundCheck(rightX));
 
@@ -116,4 +120,8 @@ Cell Game::boundCheckAntiDiag(Cell c, int shift) const {
 
     unsigned actualShift = std::min({size - 1 - c.x, c.y, (unsigned)(-shift)});
     return {c.x + actualShift, c.y - actualShift};
+}
+
+Cell Game::getWinningMove() const {
+    return winningMove;
 }

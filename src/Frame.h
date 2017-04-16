@@ -17,11 +17,9 @@ public:
     void startGame();
 
     BEGIN_FUNCTION_MAP
-    FUNCTION_2("uiClick", uiClick);
     FUNCTION_0("gridSize", gridSize);
     END_FUNCTION_MAP
 
-    sciter::value uiClick(sciter::value cur_x, sciter::value cur_y);
     int gridSize();
 };
 

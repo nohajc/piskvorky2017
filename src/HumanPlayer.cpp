@@ -7,7 +7,7 @@
 
 #include "HumanPlayer.h"
 
-Cell HumanPlayer::proposeMove(const Game & g) const {
+Cell HumanPlayer::proposeMove(const Game & g) {
     std::promise<Cell> promiseCell;
     std::future<Cell> futureCell = promiseCell.get_future();
 

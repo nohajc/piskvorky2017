@@ -84,6 +84,11 @@ public:
             this->base_reference()--;
             colIndex -= ColIncrement;
         }
+
+        void advance(typename diag_iter::iterator_adaptor_::difference_type n) {
+            this->base_reference() += n;
+            colIndex += n * ColIncrement;
+        }
     };
 
     typedef GridRowData::iterator row_iterator;

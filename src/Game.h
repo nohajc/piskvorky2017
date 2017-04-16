@@ -20,19 +20,21 @@ public:
     grid_size_t getGridSize() const;
     void play();
     void setUpdateHandler(UpdateHandlerFunc update);
+    Cell getWinningMove() const;
 
 private:
     std::unique_ptr<Player> player1, player2;
     Grid grid;
     unsigned rowLengthToWin;
     bool gameOver;
+    Cell winningMove;
 
     UpdateHandlerFunc updateHandler;
 
     // Attempt to do a next move
     // Returns true if the move was made (that means it must also have been valid),
     // returns false if the move was invalid.
-    bool nextMove(const Player & currentPlayer);
+    bool nextMove(Player & currentPlayer);
     // Update callback (for notifying UI of the last move)
     void update(Cell c) const {
         if (updateHandler) {

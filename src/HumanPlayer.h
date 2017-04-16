@@ -17,7 +17,7 @@ public:
     typedef std::function<void(ClickCallbackFunc)> AddOneClickHandlerFunc;
 
     HumanPlayer(AddOneClickHandlerFunc clickHnd);
-    virtual Cell proposeMove(const Game & g) const override;
+    virtual Cell proposeMove(const Game & g) override;
 
 private:
     AddOneClickHandlerFunc addOneClickHandler;

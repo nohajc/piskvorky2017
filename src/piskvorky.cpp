@@ -4,9 +4,12 @@
 
 #include "resources.h" // packed /res/ folder
 #include "Frame.h"
+#include "../test/TestGame.h"
 
 
 int uimain(std::function<int()> run ) {
+    testEntryPoint();
+
     sciter::archive::instance().open(aux::elements_of(resources)); // bind resources[] (defined in "resources.cpp") with the archive
 
     Frame *pwin = new Frame();
