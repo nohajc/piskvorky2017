@@ -32,17 +32,22 @@ public:
     };
 };
 
-void playGame(int testIdx, const std::vector<Cell> & moves1, const std::vector<Cell> & moves2, Cell expectedWinningMove) {
+void playGame(int testIdx,
+              const std::vector<Cell> & moves1,
+              const std::vector<Cell> & moves2,
+              Cell expectedWinningMove) {
+
     std::unique_ptr<Player> p1 = std::make_unique<TestPlayer>(moves1);
     std::unique_ptr<Player> p2 = std::make_unique<TestPlayer>(moves2);
 
     auto game = std::make_unique<Game>(5, std::move(p1), std::move(p2));
     game->play();
-    TEST_ASSERT(testIdx, moves2.back() == expectedWinningMove);
+    TEST_ASSERT(testIdx, game->getWinningMove() == expectedWinningMove);
 }
 
 void testEntryPoint() {
-    playGame(1, {{0, 2}, {0, 1}, {1, 0}},
+    playGame(1,
+             {{0, 2}, {0, 1}, {1, 0}},
              {{1, 2}, {2, 1}, {3, 0}},
              {3, 0});
 }
