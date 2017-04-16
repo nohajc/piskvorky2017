@@ -12,6 +12,11 @@ struct Cell {
         x = (unsigned)cx;
         y = (unsigned)cy;
     }
+
+    Cell(unsigned cx, unsigned cy) {
+        x = cx;
+        y = cy;
+    }
 };
 
 class Game;

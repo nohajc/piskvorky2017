@@ -3,6 +3,7 @@
 //
 
 #include <vector>
+#include <algorithm>
 #include <cstdio>
 
 #include "Game.h"
@@ -48,40 +49,44 @@ void Game::setUpdateHandler(UpdateHandlerFunc update) {
     updateHandler = update;
 }
 
-template<typename I>
-static bool gridCheckForRow(I from, I to, unsigned rowLengthToWin, Marking marking) {
-    unsigned rowLength = 0;
-
-    for (auto it = from; it != to; it++) {
-        if (*it == marking) {
-            if (++rowLength >= rowLengthToWin) {
-                return true;
-            }
-        }
-        else {
-            rowLength = 0;
-        }
-    }
-    return false;
-}
-
-bool Game::checkVictory(Cell c) {
+bool Game::checkVictory(Cell c) const {
     // Do four sweeps around the newly filled cell
     // (horizontal, vertical and two diagonal)
     // and search for a row of crosses or naughts
     Marking marking = grid[c];
 
-    auto left = std::next(grid.row_begin(c.y), boundCheck(c.x - rowLengthToWin + 1));
-    auto right = std::next(grid.row_begin(c.y), boundCheck(c.x + rowLengthToWin - 1));
+    int leftX = c.x - rowLengthToWin + 1;
+    int rightX = c.x + rowLengthToWin - 1;
 
-    auto top = std::next(grid.col_begin(c.x), boundCheck(c.y - rowLengthToWin + 1));
-    auto bottom = std::next(grid.col_begin(c.x), boundCheck(c.y + rowLengthToWin - 1));
+    int topY = c.y - rowLengthToWin + 1;
+    int bottomY = c.y + rowLengthToWin - 1;
 
-    return gridCheckForRow(left, right, rowLengthToWin, marking)
-            || gridCheckForRow(top, bottom, rowLengthToWin, marking);
+//    printf("c.x = %u, c.y = %u, leftX = %d, rightX = %d, topY = %d, bottomY = %d\n",
+//           c.x, c.y, leftX, rightX, topY, bottomY);
+
+    auto left = std::next(grid.row_begin(c.y), boundCheck(leftX));
+    auto right = std::next(grid.row_begin(c.y), boundCheck(rightX));
+
+    auto top = std::next(grid.col_begin(c.x), boundCheck(topY));
+    auto bottom = std::next(grid.col_begin(c.x), boundCheck(bottomY));
+
+    Cell chkTopLeft = boundCheckMainDiag(c, -rowLengthToWin + 1);
+    auto topLeft = grid.main_diag_at(chkTopLeft.y, chkTopLeft.x);
+    Cell chkBottomRight = boundCheckMainDiag(c, rowLengthToWin - 1);
+    auto bottomRight = grid.main_diag_at(chkBottomRight.y, chkBottomRight.x);
+
+    Cell chkTopRight = boundCheckAntiDiag(c, -rowLengthToWin + 1);
+    auto topRight = grid.anti_diag_at(chkTopRight.y, chkTopRight.x);
+    Cell chkBottomLeft = boundCheckAntiDiag(c, rowLengthToWin - 1);
+    auto bottomLeft = grid.anti_diag_at(chkBottomLeft.y, chkBottomLeft.x);
+
+    return gridCheckForRow(left, right, marking)
+            || gridCheckForRow(top, bottom, marking)
+            || gridCheckForRow(topLeft, bottomRight, marking)
+            || gridCheckForRow(topRight, bottomLeft, marking);
 }
 
-grid_size_t Game::boundCheck(int x) {
+grid_size_t Game::boundCheck(int x) const {
     if (x < 0) {
         return 0ul;
     }
@@ -89,4 +94,26 @@ grid_size_t Game::boundCheck(int x) {
         return grid.size() - 1;
     }
     return (grid_size_t)x;
+}
+
+Cell Game::boundCheckMainDiag(Cell c, int shift) const {
+    int size = (int)grid.size();
+    if (shift > 0) {
+        unsigned actualShift = std::min({size - 1 - c.x, size - 1 - c.y, (unsigned)shift});
+        return {c.x + actualShift, c.y + actualShift};
+    }
+
+    unsigned actualShift = std::min({c.x, c.y, (unsigned)(-shift)});
+    return {c.x - actualShift, c.y - actualShift};
+}
+
+Cell Game::boundCheckAntiDiag(Cell c, int shift) const {
+    int size = (int)grid.size();
+    if (shift > 0) {
+        unsigned actualShift = std::min({c.x, size - 1 - c.y, (unsigned)shift});
+        return {c.x - actualShift, c.y + actualShift};
+    }
+
+    unsigned actualShift = std::min({size - 1 - c.x, c.y, (unsigned)(-shift)});
+    return {c.x + actualShift, c.y - actualShift};
 }

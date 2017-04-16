@@ -34,14 +34,33 @@ private:
     // returns false if the move was invalid.
     bool nextMove(const Player & currentPlayer);
     // Update callback (for notifying UI of the last move)
-    void update(Cell c) {
+    void update(Cell c) const {
         if (updateHandler) {
             updateHandler(c, Player::marking_t(grid[c]));
         }
     }
 
-    bool checkVictory(Cell c);
-    grid_size_t boundCheck(int x);
+    bool checkVictory(Cell c) const;
+    grid_size_t boundCheck(int x) const;
+    Cell boundCheckMainDiag(Cell c, int shift) const;
+    Cell boundCheckAntiDiag(Cell c, int shift) const;
+
+    template<typename I>
+    bool gridCheckForRow(I from, I to, Marking marking) const {
+        unsigned rowLength = 0;
+
+        for (auto it = from; it <= to; it++) {
+            if (*it == marking) {
+                if ((++rowLength) >= rowLengthToWin) {
+                    return true;
+                }
+            }
+            else {
+                rowLength = 0;
+            }
+        }
+        return false;
+    }
 };
 
 
