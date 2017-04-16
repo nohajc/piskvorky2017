@@ -25,10 +25,21 @@ class Grid {
 
     GridData data;
 public:
-    template<typename Base>
+    // Column iterator works in almost the same way as GridData (vector) iterator which iterates over grid rows.
+    // We just need to remember the column index and access the corresponding element when dereferencing.
+    // When we test two col_iters for equality, it depends on equality of the underlying
+    // vector iterator but also on the equality of column indices.
+    // So, we override the implementation of dereference and equal.
+    template<typename Base, typename Derived = void> // Derived default cannot be set to col_iter<Base> here
     class col_iter : public boost::iterator_adaptor<
-            col_iter<Base>,
+            std::conditional_t<
+                    std::is_same<Derived, void>::value,
+                    col_iter<Base>, // This is the CRTP default
+                    Derived>, // but we also derive diag_iter from col_iter below
             Base,
+            // This is the type of value we get when we dereference the outer (row) iterator
+            // and then access a specific element in that row. It will either be const or non-const
+            // but that depends on the type of Base (which can be iterator or const_iterator).
             decltype(std::declval<typename std::iterator_traits<Base>::reference>()[0])> {
     public:
         col_iter() = default;
@@ -36,10 +47,11 @@ public:
             colIndex = colIdx;
         }
 
+    protected:
+        grid_size_t colIndex;
+
     private:
         friend class boost::iterator_core_access;
-
-        grid_size_t colIndex;
 
         typename col_iter::iterator_adaptor_::reference dereference() const {
             return (*this->base())[colIndex];
@@ -50,44 +62,37 @@ public:
         }
     };
 
+    // Diagonal iterator shares a lot in common with column iterator.
+    // We still iterate ove rows but not in a fixed column.
+    // The column index changes in sync. Therefore, we just implement
+    // increment, decrement and advance but reuse dereference and equality test.
+    // To make this work with CRTP (which is used by boost::iterator_adaptor)
+    // We need to pass the correct type of our newly derived class.
+    // That's what col_iter's Derived parameter is for.
     template<typename Base, int ColIncrement>
-    class diag_iter : public boost::iterator_adaptor<
-            diag_iter<Base, ColIncrement>,
-            Base,
-            decltype(std::declval<typename std::iterator_traits<Base>::reference>()[0])> {
+    class diag_iter : public col_iter<Base, diag_iter<Base, ColIncrement>> {
     public:
         diag_iter() = default;
-        explicit diag_iter(Base it, grid_size_t rowIdx, grid_size_t colIdx) : diag_iter::iterator_adaptor_(it) {
+        explicit diag_iter(Base it, grid_size_t rowIdx, grid_size_t colIdx) : diag_iter::col_iter(it, colIdx) {
             std::advance(this->base_reference(), rowIdx);
-            colIndex = colIdx;
         }
 
     private:
         friend class boost::iterator_core_access;
 
-        grid_size_t colIndex;
-
-        typename diag_iter::iterator_adaptor_::reference dereference() const {
-            return (*this->base())[colIndex];
-        }
-
-        bool equal(const diag_iter & other) const {
-            return this->base() == other.base() && colIndex == other.colIndex;
-        }
-
         void increment() {
             this->base_reference()++;
-            colIndex += ColIncrement;
+            this->colIndex += ColIncrement;
         }
 
         void decrement() {
             this->base_reference()--;
-            colIndex -= ColIncrement;
+            this->colIndex -= ColIncrement;
         }
 
         void advance(typename diag_iter::iterator_adaptor_::difference_type n) {
             this->base_reference() += n;
-            colIndex += n * ColIncrement;
+            this->colIndex += n * ColIncrement;
         }
     };
 
