@@ -15,11 +15,12 @@ public:
     // The return value is ignored, we need something else thant 'void' for sciter compatibility
     typedef std::function<bool(int, int)> ClickCallbackFunc;
     typedef std::function<void(ClickCallbackFunc)> AddOneClickHandlerFunc;
-private:
-    AddOneClickHandlerFunc addOneClickHandler;
-public:
+
     HumanPlayer(AddOneClickHandlerFunc clickHnd);
     virtual Cell proposeMove(const Game & g) const override;
+
+private:
+    AddOneClickHandlerFunc addOneClickHandler;
 };
 
 
