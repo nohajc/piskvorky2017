@@ -24,7 +24,6 @@ var onClickCallback = null;
 function cellHandlerFactory(x, y) {
     return function() {
         if (onClickCallback) {
-            stdout.println("Clicked at " + x + ", " + y);
             onClickCallback(x, y);
         }
     }
@@ -66,11 +65,13 @@ function generateGrid(n) {
 
 // n x n game, winner needs k in a row
 function startGame(n, k) {
+    $(#menuScreen).style["display"] = "none";
     generateGrid(n);
+    $(#board).style["display"] = "block";
     view.startGame(n, k);
 }
 
-function updateGrid(x, y, markIdx) {
+function updateGrid(x, y, markIdx, gameStatus) {
     var mark = Marking[markIdx];
     var sym = MarkingSym[mark];
     var color = MarkingColor[mark];
@@ -78,11 +79,39 @@ function updateGrid(x, y, markIdx) {
     var cell = gameGrid[y][x];
     cell.text = sym;
     cell.style["color"] = color;
+
+    if (gameStatus == "OVER") {
+        $(#gameOverScreen .msg).text = sym + " wins!";
+        $(#gameOverScreen).style["display"] = "block";
+    }
+    else if (gameStatus == "DRAW") {
+        $(#gameOverScreen .msg).text = "It's a draw";
+        $(#gameOverScreen).style["display"] = "block";
+    }
+}
+
+function showMainMenu() {
+    $(#menuScreen).style["display"] = "block";
+    var (sx,sy,sw,sh) = view.screenBox(#workarea,#rectw);
+    var (w,h) = body.box(#dimension);
+
+    view.move( sx + (sw - w) / 2, sy + (sh - h) / 2, w, h);
 }
 
 // html loaded - DOM ready
 self.ready = function () {
-    startGame(3, 3);
+    $(form#gameOptionsForm).on("change", function() {
+        this.value = { m: this.value.n };
+        return true;
+    });
+
+    $(form#gameOptionsForm).on("submit", function() {
+        var v = this.value;
+        startGame(v.n, v.k);
+        return true;
+    });
+
+    showMainMenu();
 }
 
 self.closing = function(reason) {

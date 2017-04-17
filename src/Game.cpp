@@ -8,37 +8,48 @@
 
 #include "Game.h"
 
+// TODO: add bounds checking
+// n >= 3, rowLength >= 3 and rowLength <= n
 Game::Game(grid_size_t n,
            unsigned rowLength,
            std::unique_ptr<Player> p1,
            std::unique_ptr<Player> p2)
         : player1(std::move(p1)), player2(std::move(p2)), grid(n) {
     gameOver = false;
+    gameStatus = STATUS_IN_PROGRESS;
     rowLengthToWin = rowLength;
+    moveCounter = 0;
+    movesMax = n * n;
 
     player1->setMarking(Player::CROSS);
     player2->setMarking(Player::NAUGHT);
 }
 
 void Game::play() {
-    while (true) {
+    while (moveCounter < movesMax) {
         while (!nextMove(*player1));
         if (gameOver) break;
         while (!nextMove(*player2));
         if (gameOver) break;
     }
-    printf("GAME OVER\n");
 }
 
 bool Game::nextMove(Player & currentPlayer) {
     Cell c = currentPlayer.proposeMove(*this);
     if (grid[c] == Marking::EMPTY) {
         grid[c] = Marking(currentPlayer.getMarking());
-        update(c);
+        moveCounter++;
+
         gameOver = checkVictory(c);
         if (gameOver) {
             winningMove = c;
+            gameStatus = STATUS_OVER;
         }
+        else if (moveCounter == movesMax) {
+            gameStatus = STATUS_DRAW;
+        }
+        update(c);
+
         return true;
     }
     return false;
@@ -84,3 +95,7 @@ bool Game::checkVictory(Cell c) const {
 Cell Game::getWinningMove() const {
     return winningMove;
 }
+
+const std::string Game::STATUS_OVER = "OVER";
+const std::string Game::STATUS_IN_PROGRESS = "IN_PROGRESS";
+const std::string Game::STATUS_DRAW = "DRAW";

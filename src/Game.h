@@ -8,12 +8,15 @@
 #include <memory>
 #include <functional>
 #include <utility>
+#include <string>
+
+#include <value.hpp>
 
 #include "Grid.h"
 
 class Game {
 public:
-    typedef std::function<void(Cell, Player::marking_t)> UpdateHandlerFunc;
+    typedef std::function<void(Cell, Player::marking_t, const std::string &)> UpdateHandlerFunc;
 
     Game(grid_size_t n, unsigned rowLength, std::unique_ptr<Player> p1, std::unique_ptr<Player> p2);
 
@@ -27,6 +30,13 @@ private:
     unsigned rowLengthToWin;
     bool gameOver;
     Cell winningMove;
+    std::string gameStatus;
+    unsigned moveCounter;
+    unsigned movesMax;
+
+    static const std::string STATUS_OVER;
+    static const std::string STATUS_IN_PROGRESS;
+    static const std::string STATUS_DRAW;
 
     UpdateHandlerFunc updateHandler;
 
@@ -37,7 +47,7 @@ private:
     // Update callback (for notifying UI of the last move)
     void update(Cell c) const {
         if (updateHandler) {
-            updateHandler(c, Player::marking_t(grid[c]));
+            updateHandler(c, Player::marking_t(grid[c]), gameStatus);
         }
     }
 

@@ -8,7 +8,7 @@
 #include "Frame.h"
 #include "HumanPlayer.h"
 
-static RECT defaultRect = { 100, 100, 800, 800 };
+static RECT defaultRect = { 100, 100, 400, 400 };
 
 Frame::Frame() : window( SW_MAIN | SW_TITLEBAR | SW_CONTROLS | SW_ENABLE_DEBUG, defaultRect) {}
 
@@ -48,8 +48,8 @@ sciter::value Frame::startGame(sciter::value n, sciter::value k) {
 
     game = std::make_unique<Game>(n.get<int>(), k.get<int>(), std::move(p1), std::move(p2));
 
-    game->setUpdateHandler([this](Cell c, Player::marking_t mark) {
-        call_function("updateGrid", int(c.x), int(c.y), mark);
+    game->setUpdateHandler([this](Cell c, Player::marking_t mark, const std::string & gameStatus) {
+        call_function("updateGrid", int(c.x), int(c.y), mark, gameStatus);
     });
 
     scheduleGameJob([this] {
