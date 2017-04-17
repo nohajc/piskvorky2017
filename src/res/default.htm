@@ -71,6 +71,24 @@
         font-size: 12pt;
     }
 
+    #gameOverScreen .footer
+    {
+        margin-top: *;
+        margin-bottom: 13px;
+        text-align: center;
+    }
+
+    #gameOverScreen .footer button {
+        font-size: 6pt;
+        padding: 2px 5px;
+    }
+
+    button {
+        color: #404040;
+        text-shadow: 0 0 4px white;
+        font-weight: bold;
+    }
+
 </style>
 <script type="text/tiscript" src="ui.tis"></script>
 </head>
@@ -83,6 +101,12 @@
     </form>
 </div>
 <table #board></table>
-<div #gameOverScreen><span .msg></span></div>
+<div #gameOverScreen>
+    <span .msg></span>
+    <div .footer>
+        <button #restart>Restart</button>
+        <button #backToMenu>Menu</button>
+    </div>
+</div>
 </body>
 </html>

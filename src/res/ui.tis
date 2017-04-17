@@ -1,5 +1,10 @@
 const body = $(body);
 
+const defaultWinDimensions = {
+    width: 400,
+    height: 400
+}
+
 const CELL_DIM = 50;
 
 const Marking = {
@@ -19,6 +24,8 @@ const MarkingColor = {
 
 var gameGrid = null;
 var onClickCallback = null;
+
+var lastGameConfig = {};
 
 
 function cellHandlerFactory(x, y) {
@@ -42,6 +49,7 @@ function removeOneClickHandler(func) {
 
 function generateGrid(n) {
     gameGrid = new Array(n);
+    $(#board).html = "";
 
     for (var y = 0; y < n; y++) {
         gameGrid[y] = new Array(n);
@@ -66,8 +74,12 @@ function generateGrid(n) {
 // n x n game, winner needs k in a row
 function startGame(n, k) {
     $(#menuScreen).style["display"] = "none";
+    $(#gameOverScreen).style["display"] = "none";
     generateGrid(n);
     $(#board).style["display"] = "block";
+
+    lastGameConfig.n = n;
+    lastGameConfig.k = k;
     view.startGame(n, k);
 }
 
@@ -91,15 +103,19 @@ function updateGrid(x, y, markIdx, gameStatus) {
 }
 
 function showMainMenu() {
+    $(#board).style["display"] = "none";
+    $(#gameOverScreen).style["display"] = "none";
     $(#menuScreen).style["display"] = "block";
     var (sx,sy,sw,sh) = view.screenBox(#workarea,#rectw);
-    var (w,h) = body.box(#dimension);
+    // var (w,h) = body.box(#dimension);
+    var w = defaultWinDimensions.width;
+    var h = defaultWinDimensions.height;
 
     view.move( sx + (sw - w) / 2, sy + (sh - h) / 2, w, h);
 }
 
 // html loaded - DOM ready
-self.ready = function () {
+self.ready = function() {
     view.startGameLoop();
 
     $(form#gameOptionsForm).on("change", function() {
@@ -112,6 +128,13 @@ self.ready = function () {
         startGame(v.n, v.k);
         return true;
     });
+
+    $(#restart).on("click", function() {
+        startGame(lastGameConfig.n, lastGameConfig.k);
+        return true;
+    });
+
+    $(#backToMenu).on("click", ::showMainMenu());
 
     showMainMenu();
 }

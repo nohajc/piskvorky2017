@@ -57,8 +57,12 @@ sciter::value Frame::startGame(sciter::value n, sciter::value k) {
         gameInProgress = true;
         game->play();
         gameInProgress = false;
-        return false;
+        // The game loop will wait for
+        // another job if we return true here
+        return true;
     });
+
+    return sciter::value();
 }
 
 bool Frame::endGameLoop() {
