@@ -31,9 +31,10 @@ void Frame::gameLoop() {
     }
 }
 
-void Frame::startGameLoop() {
+bool Frame::startGameLoop() {
     jobAvailable = false;
     gameLoopThread = std::thread([this] { gameLoop(); });
+    return true;
 }
 
 // TODO: add parameters to configure the game,

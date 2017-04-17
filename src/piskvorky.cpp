@@ -13,14 +13,9 @@ int uimain(std::function<int()> run) {
 
     Frame *pwin = new Frame();
 
-    pwin->startGameLoop();
-
     // note: this:://app URL schema is dedicated to the sciter::archive content associated with the application
     pwin->load( WSTR("this://app/default.htm") );
-
     pwin->expand();
-
-    // pwin->startGame(5, 3);
 
     return run();
 }

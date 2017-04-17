@@ -100,6 +100,8 @@ function showMainMenu() {
 
 // html loaded - DOM ready
 self.ready = function () {
+    view.startGameLoop();
+
     $(form#gameOptionsForm).on("change", function() {
         this.value = { m: this.value.n };
         return true;
