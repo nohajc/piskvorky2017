@@ -64,6 +64,12 @@ function generateGrid(n) {
     view.move( sx + (sw - width) / 2, sy + (sh - height) / 2, width, height);
 }
 
+// n x n game, winner needs k in a row
+function startGame(n, k) {
+    generateGrid(n);
+    view.startGame(n, k);
+}
+
 function updateGrid(x, y, markIdx) {
     var mark = Marking[markIdx];
     var sym = MarkingSym[mark];
@@ -75,4 +81,10 @@ function updateGrid(x, y, markIdx) {
 }
 
 // html loaded - DOM ready
-self.ready = ::generateGrid(view.gridSize()); // TODO: make sure we only call this after Frame::game was initialized
+self.ready = function () {
+    startGame(3, 3);
+}
+
+self.closing = function(reason) {
+    view.endGameLoop();
+}

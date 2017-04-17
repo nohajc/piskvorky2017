@@ -12,7 +12,7 @@
 
 #include "Player.h"
 
-typedef unsigned long grid_size_t;
+typedef unsigned grid_size_t;
 
 enum class Marking {EMPTY = 0, NAUGHT = Player::NAUGHT, CROSS = Player::CROSS};
 
@@ -24,6 +24,7 @@ class Grid {
     typedef std::vector<GridRowData> GridData;
 
     GridData data;
+
 public:
     // Column iterator works in almost the same way as GridData (vector) iterator which iterates over grid rows.
     // We just need to remember the column index and access the corresponding element when dereferencing.
@@ -112,13 +113,17 @@ public:
 
     row_iterator row_begin(grid_size_t rowIdx);
     row_iterator row_end(grid_size_t rowIdx);
+    row_iterator row_at(grid_size_t rowIdx, grid_size_t colIdx);
     row_const_iterator row_begin(grid_size_t rowIdx) const;
     row_const_iterator row_end(grid_size_t rowIdx) const;
+    row_const_iterator row_at(grid_size_t rowIdx, grid_size_t colIdx) const;
 
     col_iterator col_begin(grid_size_t colIdx);
     col_iterator col_end(grid_size_t colIdx);
+    col_iterator col_at(grid_size_t rowIdx, grid_size_t colIdx);
     col_const_iterator col_begin(grid_size_t colIdx) const;
     col_const_iterator col_end(grid_size_t colIdx) const;
+    col_const_iterator col_at(grid_size_t rowIdx, grid_size_t colIdx) const;
 
     main_diag_iterator main_diag_at(grid_size_t rowIdx, grid_size_t colIdx);
     main_diag_const_iterator main_diag_at(grid_size_t rowIdx, grid_size_t colIdx) const;
@@ -132,6 +137,12 @@ public:
     const Marking & operator[](Cell c) const;
 
     grid_size_t size() const;
+
+    grid_size_t boundCheck(int x) const;
+
+    Cell boundCheckMainDiag(Cell c, int shift) const;
+
+    Cell boundCheckAntiDiag(Cell c, int shift) const;
 };
 
 

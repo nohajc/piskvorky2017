@@ -34,7 +34,6 @@ struct Cell {
 
 class Game;
 
-// TODO: add subclass TestPlayer that plays a predefined set of games
 class Player {
 public:
     enum marking_t {NAUGHT = 1, CROSS = 2};

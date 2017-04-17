@@ -15,9 +15,8 @@ class Game {
 public:
     typedef std::function<void(Cell, Player::marking_t)> UpdateHandlerFunc;
 
-    Game(grid_size_t n, std::unique_ptr<Player> p1, std::unique_ptr<Player> p2, unsigned rowLength = 3);
+    Game(grid_size_t n, unsigned rowLength, std::unique_ptr<Player> p1, std::unique_ptr<Player> p2);
 
-    grid_size_t getGridSize() const;
     void play();
     void setUpdateHandler(UpdateHandlerFunc update);
     Cell getWinningMove() const;
@@ -43,9 +42,6 @@ private:
     }
 
     bool checkVictory(Cell c) const;
-    grid_size_t boundCheck(int x) const;
-    Cell boundCheckMainDiag(Cell c, int shift) const;
-    Cell boundCheckAntiDiag(Cell c, int shift) const;
 
     template<typename I>
     bool gridCheckForRow(I from, I to, Marking marking) const {

@@ -40,7 +40,7 @@ void playGame(int testIdx,
     std::unique_ptr<Player> p1 = std::make_unique<TestPlayer>(moves1);
     std::unique_ptr<Player> p2 = std::make_unique<TestPlayer>(moves2);
 
-    auto game = std::make_unique<Game>(5, std::move(p1), std::move(p2));
+    auto game = std::make_unique<Game>(5, 3, std::move(p1), std::move(p2));
     game->play();
     TEST_ASSERT(testIdx, game->getWinningMove() == expectedWinningMove);
 }
