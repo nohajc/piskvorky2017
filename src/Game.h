@@ -26,6 +26,7 @@ public:
 
 private:
     std::unique_ptr<Player> player1, player2;
+    std::reference_wrapper<Player> currentPlayer, theOtherPlayer;
     Grid grid;
     unsigned rowLengthToWin;
     bool gameOver;

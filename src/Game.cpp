@@ -14,7 +14,8 @@ Game::Game(grid_size_t n,
            unsigned rowLength,
            std::unique_ptr<Player> p1,
            std::unique_ptr<Player> p2)
-        : player1(std::move(p1)), player2(std::move(p2)), grid(n) {
+        : player1(std::move(p1)), player2(std::move(p2)),
+          currentPlayer(*player1), theOtherPlayer(*player2), grid(n) {
     gameOver = false;
     gameStatus = STATUS_IN_PROGRESS;
     rowLengthToWin = rowLength;
@@ -27,10 +28,9 @@ Game::Game(grid_size_t n,
 
 void Game::play() {
     while (moveCounter < movesMax) {
-        while (!nextMove(*player1));
+        while (!nextMove(currentPlayer));
         if (gameOver) break;
-        while (!nextMove(*player2));
-        if (gameOver) break;
+        std::swap(currentPlayer, theOtherPlayer);
     }
 }
 
