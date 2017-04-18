@@ -40,7 +40,7 @@ public:
 
     void setMarking(marking_t m);
     marking_t getMarking() const;
-    virtual Cell proposeMove(const Game & g) = 0;
+    virtual Cell proposeMove(const Game &) = 0;
 
 private:
     marking_t marking;

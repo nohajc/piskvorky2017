@@ -26,7 +26,7 @@ public:
         move = recordedMoves.begin();
     }
 
-    virtual Cell proposeMove(const Game & g) override {
+    virtual Cell proposeMove(const Game &) override {
         if (move == recordedMoves.end()) return {};
         return *move++;
     };

@@ -116,3 +116,34 @@ Cell Grid::boundCheckAntiDiag(Cell c, int shift) const {
     unsigned actualShift = std::min({gridSize - 1 - c.x, c.y, (unsigned)(-shift)});
     return {c.x + actualShift, c.y - actualShift};
 }
+
+unsigned Grid::longestRowAround(Cell c, unsigned radius) const {
+    // Do four sweeps around the newly filled cell
+    // (horizontal, vertical and two diagonal)
+    // and search for a row of crosses or naughts
+    Marking marking = (*this)[c];
+
+//    printf("c.x = %u, c.y = %u, leftX = %d, rightX = %d, topY = %d, bottomY = %d\n",
+//           c.x, c.y, leftX, rightX, topY, bottomY);
+
+    auto left = row_at(c.y, boundCheck(c.x - radius));
+    auto right = row_at(c.y, boundCheck(c.x + radius));
+
+    auto top = col_at(boundCheck(c.y - radius), c.x);
+    auto bottom = col_at(boundCheck(c.y + radius), c.x);
+
+    Cell chkTopLeft = boundCheckMainDiag(c, -radius);
+    auto topLeft = main_diag_at(chkTopLeft.y, chkTopLeft.x);
+    Cell chkBottomRight = boundCheckMainDiag(c, radius);
+    auto bottomRight = main_diag_at(chkBottomRight.y, chkBottomRight.x);
+
+    Cell chkTopRight = boundCheckAntiDiag(c, -radius);
+    auto topRight = anti_diag_at(chkTopRight.y, chkTopRight.x);
+    Cell chkBottomLeft = boundCheckAntiDiag(c, radius);
+    auto bottomLeft = anti_diag_at(chkBottomLeft.y, chkBottomLeft.x);
+
+    return std::max({checkForRowInRange(left, right, marking),
+                     checkForRowInRange(top, bottom, marking),
+                     checkForRowInRange(topLeft, bottomRight, marking),
+                     checkForRowInRange(topRight, bottomLeft, marking)});
+}

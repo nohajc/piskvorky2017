@@ -20,12 +20,12 @@ enum class Marking {EMPTY = 0, NAUGHT = Player::NAUGHT, CROSS = Player::CROSS};
 // It provides row, column and diagonal iterators
 // but also operator[] for individual cell access.
 class Grid {
+public:
     typedef std::vector<Marking> GridRowData;
     typedef std::vector<GridRowData> GridData;
 
-    GridData data;
+    Grid(grid_size_t n) : data(n, std::vector<Marking>(n)) {}
 
-public:
     // Column iterator works in almost the same way as GridData (vector) iterator which iterates over grid rows.
     // We just need to remember the column index and access the corresponding element when dereferencing.
     // When we test two col_iters for equality, it depends on equality of the underlying
@@ -109,8 +109,6 @@ public:
     typedef diag_iter<GridData::iterator, -1> anti_diag_iterator;
     typedef diag_iter<GridData::const_iterator, -1> anti_diag_const_iterator;
 
-    Grid(grid_size_t n) : data(n, std::vector<Marking>(n)) {}
-
     row_iterator row_begin(grid_size_t rowIdx);
     row_iterator row_end(grid_size_t rowIdx);
     row_iterator row_at(grid_size_t rowIdx, grid_size_t colIdx);
@@ -138,12 +136,39 @@ public:
 
     grid_size_t size() const;
 
+    unsigned longestRowAround(Cell c, unsigned radius) const;
+
     grid_size_t boundCheck(int x) const;
-
     Cell boundCheckMainDiag(Cell c, int shift) const;
-
     Cell boundCheckAntiDiag(Cell c, int shift) const;
-};
 
+private:
+    template<typename I>
+    unsigned checkForRowInRange(I from, I to, Marking marking) const {
+        unsigned rowLength = 0;
+        unsigned maxLength = 0;
+
+        auto updateMax = [&] {
+            if (rowLength > maxLength) {
+                maxLength = rowLength;
+            }
+        };
+
+        for (auto it = from; it <= to; it++) {
+            if (*it == marking) {
+                ++rowLength;
+            }
+            else {
+                updateMax();
+                rowLength = 0;
+            }
+        }
+
+        updateMax();
+        return maxLength;
+    }
+
+    GridData data;
+};
 
 #endif //PISKVORKY2017_GRID_H

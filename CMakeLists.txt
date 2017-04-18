@@ -19,7 +19,7 @@ add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/src/resources.h
         COMMAND ${PROJECT_SOURCE_DIR}/pack-resources.sh ${PROJECT_SOURCE_DIR}
         DEPENDS ${RES_FILES})
 
-set(SOURCE_FILES src/piskvorky.cpp src/resources.h sciter-sdk/include/sciter-gtk-main.cpp src/Game.cpp src/Game.h src/Player.cpp src/Player.h src/HumanPlayer.cpp src/HumanPlayer.h src/Frame.cpp src/Frame.h src/Grid.cpp src/Grid.h test/TestGame.cpp test/TestGame.h)
+set(SOURCE_FILES src/piskvorky.cpp src/resources.h sciter-sdk/include/sciter-gtk-main.cpp src/Game.cpp src/Game.h src/Player.cpp src/Player.h src/HumanPlayer.cpp src/HumanPlayer.h src/Frame.cpp src/Frame.h src/Grid.cpp src/Grid.h test/TestGame.cpp test/TestGame.h src/MinMaxPlayer.cpp src/MinMaxPlayer.h)
 
 include_directories(sciter-sdk/include)
 include_directories(src)

@@ -7,6 +7,7 @@
 
 #include "Frame.h"
 #include "HumanPlayer.h"
+#include "MinMaxPlayer.h"
 
 static RECT defaultRect = { 100, 100, 400, 400 };
 
@@ -44,8 +45,9 @@ sciter::value Frame::startGame(sciter::value n, sciter::value k) {
         call_function("addOneClickHandler", sciter::vfunc(callback));
     };
 
-    std::unique_ptr<Player> p1 = std::make_unique<HumanPlayer>(addOneClickHnd);
-    std::unique_ptr<Player> p2 = std::make_unique<HumanPlayer>(addOneClickHnd);
+    auto p1 = std::make_unique<HumanPlayer>(addOneClickHnd);
+//    auto p2 = std::make_unique<HumanPlayer>(addOneClickHnd);
+    auto p2 = std::make_unique<MinMaxPlayer>();
 
     game = std::make_unique<Game>(n.get<int>(), k.get<int>(), std::move(p1), std::move(p2));
 

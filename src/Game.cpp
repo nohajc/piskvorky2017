@@ -7,6 +7,7 @@
 #include <cstdio>
 
 #include "Game.h"
+#include "Grid.h"
 
 // TODO: add bounds checking
 // n >= 3, rowLength >= 3 and rowLength <= n
@@ -34,10 +35,11 @@ void Game::play() {
     }
 }
 
-bool Game::nextMove(Player & currentPlayer) {
-    Cell c = currentPlayer.proposeMove(*this);
+bool Game::nextMove(Player & currPlayer) {
+    Cell c = currPlayer.proposeMove(*this);
     if (grid[c] == Marking::EMPTY) {
-        grid[c] = Marking(currentPlayer.getMarking());
+        grid[c] = Marking(currPlayer.getMarking());
+        lastMove = c;
         moveCounter++;
 
         gameOver = checkVictory(c);
@@ -60,36 +62,8 @@ void Game::setUpdateHandler(UpdateHandlerFunc update) {
 }
 
 bool Game::checkVictory(Cell c) const {
-    // Do four sweeps around the newly filled cell
-    // (horizontal, vertical and two diagonal)
-    // and search for a row of crosses or naughts
-    Marking marking = grid[c];
-    int radius = rowLengthToWin - 1;
-
-//    printf("c.x = %u, c.y = %u, leftX = %d, rightX = %d, topY = %d, bottomY = %d\n",
-//           c.x, c.y, leftX, rightX, topY, bottomY);
-
-    // TODO: move bound checking to Grid, unify interface (row_at, col_at, ...)
-    auto left = grid.row_at(c.y, grid.boundCheck(c.x - radius));
-    auto right = grid.row_at(c.y, grid.boundCheck(c.x + radius));
-
-    auto top = grid.col_at(grid.boundCheck(c.y - radius), c.x);
-    auto bottom = grid.col_at(grid.boundCheck(c.y + radius), c.x);
-
-    Cell chkTopLeft = grid.boundCheckMainDiag(c, -radius);
-    auto topLeft = grid.main_diag_at(chkTopLeft.y, chkTopLeft.x);
-    Cell chkBottomRight = grid.boundCheckMainDiag(c, radius);
-    auto bottomRight = grid.main_diag_at(chkBottomRight.y, chkBottomRight.x);
-
-    Cell chkTopRight = grid.boundCheckAntiDiag(c, -radius);
-    auto topRight = grid.anti_diag_at(chkTopRight.y, chkTopRight.x);
-    Cell chkBottomLeft = grid.boundCheckAntiDiag(c, radius);
-    auto bottomLeft = grid.anti_diag_at(chkBottomLeft.y, chkBottomLeft.x);
-
-    return gridCheckForRow(left, right, marking)
-            || gridCheckForRow(top, bottom, marking)
-            || gridCheckForRow(topLeft, bottomRight, marking)
-            || gridCheckForRow(topRight, bottomLeft, marking);
+    unsigned longestRow = grid.longestRowAround(c, rowLengthToWin - 1);
+    return longestRow >= rowLengthToWin;
 }
 
 Cell Game::getWinningMove() const {
@@ -99,3 +73,15 @@ Cell Game::getWinningMove() const {
 const std::string Game::STATUS_OVER = "OVER";
 const std::string Game::STATUS_IN_PROGRESS = "IN_PROGRESS";
 const std::string Game::STATUS_DRAW = "DRAW";
+
+const Grid & Game::getGrid() const {
+    return grid;
+}
+
+Cell Game::getLastMove() const {
+    return lastMove;
+}
+
+unsigned Game::getMoveCounter() const {
+    return moveCounter;
+}

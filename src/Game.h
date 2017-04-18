@@ -23,6 +23,9 @@ public:
     void play();
     void setUpdateHandler(UpdateHandlerFunc update);
     Cell getWinningMove() const;
+    const Grid & getGrid() const;
+    Cell getLastMove() const;
+    unsigned getMoveCounter() const;
 
 private:
     std::unique_ptr<Player> player1, player2;
@@ -30,6 +33,7 @@ private:
     Grid grid;
     unsigned rowLengthToWin;
     bool gameOver;
+    Cell lastMove;
     Cell winningMove;
     std::string gameStatus;
     unsigned moveCounter;
@@ -54,22 +58,6 @@ private:
 
     bool checkVictory(Cell c) const;
 
-    template<typename I>
-    bool gridCheckForRow(I from, I to, Marking marking) const {
-        unsigned rowLength = 0;
-
-        for (auto it = from; it <= to; it++) {
-            if (*it == marking) {
-                if ((++rowLength) >= rowLengthToWin) {
-                    return true;
-                }
-            }
-            else {
-                rowLength = 0;
-            }
-        }
-        return false;
-    }
 };
 
 
