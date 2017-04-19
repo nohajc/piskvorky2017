@@ -26,6 +26,7 @@ public:
     const Grid & getGrid() const;
     Cell getLastMove() const;
     unsigned getMoveCounter() const;
+    unsigned int getRowLengthToWin() const;
 
 private:
     std::unique_ptr<Player> player1, player2;

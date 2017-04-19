@@ -85,3 +85,7 @@ Cell Game::getLastMove() const {
 unsigned Game::getMoveCounter() const {
     return moveCounter;
 }
+
+unsigned int Game::getRowLengthToWin() const {
+    return rowLengthToWin;
+}

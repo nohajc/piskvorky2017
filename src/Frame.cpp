@@ -46,6 +46,7 @@ sciter::value Frame::startGame(sciter::value n, sciter::value k) {
     };
 
     auto p1 = std::make_unique<HumanPlayer>(addOneClickHnd);
+//    auto p1 = std::make_unique<MinMaxPlayer>();
 //    auto p2 = std::make_unique<HumanPlayer>(addOneClickHnd);
     auto p2 = std::make_unique<MinMaxPlayer>();
 

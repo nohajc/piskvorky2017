@@ -38,7 +38,7 @@ class Player {
 public:
     enum marking_t {NAUGHT = 1, CROSS = 2};
 
-    void setMarking(marking_t m);
+    virtual void setMarking(marking_t m);
     marking_t getMarking() const;
     virtual Cell proposeMove(const Game &) = 0;
 
