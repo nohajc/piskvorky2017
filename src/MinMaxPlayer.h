@@ -10,6 +10,7 @@
 #include <random>
 #include <utility>
 #include <tuple>
+#include <queue>
 
 #include "Player.h"
 #include "Grid.h"
@@ -26,14 +27,21 @@ public:
 private:
     typedef int score_t;
 
+    enum class NodeType {
+        MIN, MAX
+    };
+
     struct MinMaxTree {
+        static constexpr unsigned maxNodeCnt = 150000;
         Grid grid;
         std::vector<std::unique_ptr<MinMaxTree>> nodes;
-        std::vector<Cell> moves; // TODO: make this a map?
+        std::vector<Cell> moves;
         score_t bestScore;
         Cell bestMove;
+        Marking marking;
+        NodeType type;
 
-        MinMaxTree(const Grid & g) : grid(g) {}
+        MinMaxTree(const Grid & g, Marking m, NodeType t) : grid(g), marking(m), type(t) {}
     };
 
     Cell findBestMove(const Game & g);
@@ -49,9 +57,7 @@ private:
         static bool betterThan(score_t a, score_t b) {
             return a > b;
         }
-        static score_t score(unsigned val) {
-            return val;
-        }
+
     };
 
     struct TypeMin : public Type {
@@ -59,54 +65,40 @@ private:
         static bool betterThan(score_t a, score_t b) {
             return a < b;
         }
-        static score_t score(unsigned val) {
-            return -val;
-        }
     };
 
-    template <typename Type>
-    std::unique_ptr<MinMaxTree> buildMinMaxTree(const Grid & grid) {
-        auto tree = std::make_unique<MinMaxTree>(grid);
-        grid_size_t gridSize = grid.size();
-        bool firstAvailable = true;
-        bool boardFull = true;
-
-        for (int y = 0; y < gridSize; y++) {
-            for (int x = 0; x < gridSize; x++) {
-                Cell c = {x, y};
-                if (grid[c] == Marking::EMPTY) {
-                    boardFull = false;
-                    Grid gridNext = grid;
-                    gridNext[c] = std::get<Type>(playerMark).marking;
-
-                    std::unique_ptr<MinMaxTree> nodeNext;
-                    if (gridNext.longestRowAround(c, rowLengthToWin - 1) >= rowLengthToWin) {
-                        nodeNext = std::make_unique<MinMaxTree>(gridNext); // Leaf
-                        nodeNext->bestScore = Type::score(rowLengthToWin);
-                    }
-                    else {
-                        nodeNext = buildMinMaxTree<typename Type::swap>(gridNext);
-                    }
-
-                    if (firstAvailable || Type::betterThan(nodeNext->bestScore, tree->bestScore)) {
-                        tree->bestScore = nodeNext->bestScore;
-                        tree->bestMove = c;
-                        firstAvailable = false;
-                    }
-                    tree->moves.push_back(c);
-                    tree->nodes.push_back(std::move(nodeNext));
-                }
-            }
+    static score_t score(unsigned val, NodeType t) {
+        switch (t) {
+            case NodeType::MIN:
+                return -val;
+            case NodeType::MAX:
+                return val;
         }
-
-        if (boardFull) { // Draw
-            tree->bestScore = Type::score(0);
-        }
-
-        return tree;
     }
 
-    Cell walkMinMaxTree(Cell move);
+    std::unique_ptr<MinMaxTree> buildMinMaxTree(const Grid & grid, unsigned & nodeCnt);
+
+    std::unique_ptr<MinMaxTree> constructMinMaxTreeNodes(const Grid & grid, unsigned & nodeCnt, Marking m);
+
+    template <typename Type>
+    void computeMinMaxOnTree(MinMaxTree & tree) {
+        bool firstAvailable = true;
+
+        unsigned i = 0;
+        for (auto & nodeNext : tree.nodes) {
+            Cell c = tree.moves[i++];
+
+            computeMinMaxOnTree<typename Type::swap>(*nodeNext);
+
+            if (firstAvailable || Type::betterThan(nodeNext->bestScore, tree.bestScore)) {
+                tree.bestScore = nodeNext->bestScore;
+                tree.bestMove = c;
+                firstAvailable = false;
+            }
+        }
+    }
+
+//    Cell walkMinMaxTree(Cell move);
 
     std::unique_ptr<MinMaxTree> minMaxRoot;
     std::random_device rd;
