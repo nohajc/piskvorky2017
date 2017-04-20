@@ -22,9 +22,10 @@ if(UNIX)
 endif()
 
 if(APPLE)
-    set(SCITER_LIB ${CMAKE_SOURCE_DIR}}/sciter-sdk/bin.osx/sciter-osx-64.dylib)
+    set(SCITER_LIB ${CMAKE_SOURCE_DIR}/sciter-sdk/bin.osx/sciter-osx-64.dylib)
     set(RES_PACK_SCRIPT ${PROJECT_SOURCE_DIR}/pack-resources.sh osx)
     target_sources(piskvorky2017 PUBLIC sciter-sdk/include/sciter-osx-main.mm) # Add platform-specific main
+    set(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa -framework AppKit -framework CoreData -framework Foundation")
 elseif(UNIX) # Linux
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
