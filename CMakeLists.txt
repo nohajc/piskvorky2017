@@ -18,14 +18,12 @@ include_directories(src)
 add_executable(piskvorky2017 ${SOURCE_FILES})
 
 if(UNIX)
-    set(RES_PACK_SCRIPT ${PROJECT_SOURCE_DIR}/pack-resources.sh)
     target_link_libraries(piskvorky2017 ${CMAKE_DL_LIBS})
-elseif(WIN32)
-    set(RES_PACK_SCRIPT ${PROJECT_SOURCE_DIR}/pack-resources.bat)
 endif()
 
 if(APPLE)
     set(SCITER_LIB ${CMAKE_SOURCE_DIR}}/sciter-sdk/bin.osx/sciter-osx-64.dylib)
+    set(RES_PACK_SCRIPT ${PROJECT_SOURCE_DIR}/pack-resources.sh osx)
 elseif(UNIX) # Linux
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
@@ -37,6 +35,7 @@ elseif(UNIX) # Linux
     target_link_libraries(piskvorky2017 ${GTK3_LIBRARIES})
 
     set(SCITER_LIB ${CMAKE_SOURCE_DIR}/sciter-sdk/bin.gtk/libsciter-gtk-64.so)
+    set(RES_PACK_SCRIPT ${PROJECT_SOURCE_DIR}/pack-resources.sh gtk)
 elseif(WIN32)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8) # WIN64
         set(SCITER_LIB ${CMAKE_SOURCE_DIR}/sciter-sdk/bin/64/sciter.dll)
