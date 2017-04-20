@@ -72,7 +72,11 @@ function generateGrid(n) {
 }
 
 // n x n game, winner needs k in a row
-function startGame(n, k) {
+function startGame(n, k, first) {
+    if (n < 3) n = 3;
+    if (k < 3) k = 3;
+    if (k > n) k = n;
+
     $(#menuScreen).style["display"] = "none";
     $(#gameOverScreen).style["display"] = "none";
     generateGrid(n);
@@ -80,7 +84,8 @@ function startGame(n, k) {
 
     lastGameConfig.n = n;
     lastGameConfig.k = k;
-    view.startGame(n, k);
+    lastGameConfig.first = first;
+    view.startGame(n, k, first);
 }
 
 function updateGrid(x, y, markIdx, gameStatus) {
@@ -125,12 +130,12 @@ self.ready = function() {
 
     $(form#gameOptionsForm).on("submit", function() {
         var v = this.value;
-        startGame(v.n, v.k);
+        startGame(v.n, v.k, v.whoStarts);
         return true;
     });
 
     $(#restart).on("click", function() {
-        startGame(lastGameConfig.n, lastGameConfig.k);
+        startGame(lastGameConfig.n, lastGameConfig.k, lastGameConfig.first);
         return true;
     });
 

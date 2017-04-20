@@ -38,17 +38,21 @@ bool Frame::startGameLoop() {
     return true;
 }
 
-// TODO: add parameters to configure the game,
-// make available to UI script.
-sciter::value Frame::startGame(sciter::value n, sciter::value k) {
+sciter::value Frame::startGame(sciter::value n, sciter::value k, sciter::value first) {
+    std::unique_ptr<Player> p1, p2;
+
     auto addOneClickHnd = [this](HumanPlayer::ClickCallbackFunc callback) {
         call_function("addOneClickHandler", sciter::vfunc(callback));
     };
 
-    auto p1 = std::make_unique<HumanPlayer>(addOneClickHnd);
-//    auto p1 = std::make_unique<MinMaxPlayer>();
-//    auto p2 = std::make_unique<HumanPlayer>(addOneClickHnd);
-    auto p2 = std::make_unique<MinMaxPlayer>();
+    if (first == "human") {
+        p1 = std::make_unique<HumanPlayer>(addOneClickHnd);
+        p2 = std::make_unique<MinMaxPlayer>();
+    }
+    else {
+        p1 = std::make_unique<MinMaxPlayer>();
+        p2 = std::make_unique<HumanPlayer>(addOneClickHnd);
+    }
 
     game = std::make_unique<Game>(n.get<int>(), k.get<int>(), std::move(p1), std::move(p2));
 

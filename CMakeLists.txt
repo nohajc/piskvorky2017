@@ -15,11 +15,33 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread -Wno-attributes")
 
 set(RES_FILES src/res/default.htm src/res/ui.tis)
 
+if(UNIX)
+    set(RES_PACK_SCRIPT ${PROJECT_SOURCE_DIR}/pack-resources.sh)
+elseif(WIN32)
+    set(RES_PACK_SCRIPT ${PROJECT_SOURCE_DIR}/pack-resources.bat)
+endif()
+
+if(APPLE)
+    set(SCITER_LIB ${CMAKE_SOURCE_DIR}}/sciter-sdk/bin.osx/sciter-osx-64.dylib)
+elseif(UNIX)
+    set(SCITER_LIB ${CMAKE_SOURCE_DIR}/sciter-sdk/bin.gtk/libsciter-gtk-64.so)
+elseif(WIN32)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8) # WIN64
+        set(SCITER_LIB ${CMAKE_SOURCE_DIR}/sciter-sdk/bin/64/sciter.dll)
+    else() # WIN32
+        set(SCITER_LIB ${CMAKE_SOURCE_DIR}/sciter-sdk/bin/64/sciter.dll)
+    endif()
+else()
+    message(FATAL_ERROR "Unsupported platform")
+endif()
+
 add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/src/resources.h
-        COMMAND ${PROJECT_SOURCE_DIR}/pack-resources.sh ${PROJECT_SOURCE_DIR}
+        COMMAND ${RES_PACK_SCRIPT} ${PROJECT_SOURCE_DIR}
         DEPENDS ${RES_FILES})
 
-set(SOURCE_FILES src/piskvorky.cpp src/resources.h sciter-sdk/include/sciter-gtk-main.cpp src/Game.cpp src/Game.h src/Player.cpp src/Player.h src/HumanPlayer.cpp src/HumanPlayer.h src/Frame.cpp src/Frame.h src/Grid.cpp src/Grid.h test/TestGame.cpp test/TestGame.h src/MinMaxPlayer.cpp src/MinMaxPlayer.h)
+set(SOURCE_FILES src/piskvorky.cpp src/resources.h src/main.cpp
+        src/Game.cpp src/Game.h src/Player.cpp src/Player.h src/HumanPlayer.cpp src/HumanPlayer.h src/Frame.cpp
+        src/Frame.h src/Grid.cpp src/Grid.h test/TestGame.cpp test/TestGame.h src/MinMaxPlayer.cpp src/MinMaxPlayer.h)
 
 include_directories(sciter-sdk/include)
 include_directories(src)
@@ -33,4 +55,4 @@ set(EXEC_DIR ${PROJECT_SOURCE_DIR}/bin)
 add_custom_command(TARGET piskvorky2017 POST_BUILD
         COMMAND mkdir -p ${EXEC_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:piskvorky2017> ${EXEC_DIR}/
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/sciter-sdk/bin.gtk/libsciter-gtk-64.so ${EXEC_DIR}/)
+        COMMAND ${CMAKE_COMMAND} -E copy ${SCITER_LIB} ${EXEC_DIR}/)

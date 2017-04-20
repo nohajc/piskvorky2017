@@ -9,6 +9,8 @@
 
 #include "TestGame.h"
 
+// TODO: move to a separate compilation target
+
 #define TEST_ASSERT(idx, cond) if (cond) { \
     printf("Test %d OK.\n", (idx)); \
 } \

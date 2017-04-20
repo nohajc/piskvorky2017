@@ -1,4 +1,4 @@
-<html window-frame="transparent">
+<html>
 <head>
 <title>Piskvorky2017</title>
 <style>
@@ -109,6 +109,13 @@
         font-size: 8pt;
     }
 
+    #gameOptionsForm .firstPlayer {
+        display: inline-block;
+        font-size: 7pt;
+        text-align: left;
+        vertical-align: middle;
+    }
+
 </style>
 <script type="text/tiscript" src="ui.tis"></script>
 </head>
@@ -117,7 +124,12 @@
     <form #gameOptionsForm>
         <p>Board size: <input|integer(n) value="3" maxlength="2" /> x <output(m) value="3" /></p>
         <p>Row length: <input|integer(k) value="3" maxlength="2" /></p>
-        <button|submit>Start game!</button>
+        First player:
+        <div .firstPlayer>
+            <p><input type="radio" name="whoStarts" value="human" checked> Human</p>
+            <p><input type="radio" name="whoStarts" value="computer"> Computer</p>
+        </div>
+        <p><button|submit>Start game!</button></p>
     </form>
 </div>
 <table #board></table>

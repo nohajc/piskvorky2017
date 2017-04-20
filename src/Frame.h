@@ -39,13 +39,13 @@ class Frame: public sciter::window {
 public:
     Frame();
     bool startGameLoop();
-    sciter::value startGame(sciter::value n, sciter::value k);
+    sciter::value startGame(sciter::value n, sciter::value k, sciter::value first);
     bool endGameLoop();
 
     BEGIN_FUNCTION_MAP
     FUNCTION_0("startGameLoop", startGameLoop);
     FUNCTION_0("endGameLoop", endGameLoop);
-    FUNCTION_2("startGame", startGame);
+    FUNCTION_3("startGame", startGame);
     END_FUNCTION_MAP
 };
 
