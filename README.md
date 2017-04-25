@@ -30,16 +30,16 @@ Method `Game::play()` is the game loop. In the game loop, we perform moves. Curr
 
 `Grid` is a wrapper for 2D vector of `Cell`s. A `Cell` can be empty or it can hold cross/naught. When we check for victory of a `Player` (after each move), we have to search for a row of crosses/naughts in every direction. It is therefore useful to implement horizontal, vertical and diagonal iterators on `Grid`. We do that with the help of **Boost Iterator Adaptor**.
 
-`Frame` is derived from `sciter::windows` and it is the glue between game logic and UI. It exposes some of the C++ methods to TIScript, so that we can configure the game parameters using a HTML form and then call game initialization from the `sumbit` event handler.
+`Frame` is derived from `sciter::window` and it is the glue between game logic and UI. It exposes some of the C++ methods to TIScript, so that we can configure the game parameters using a HTML form and then call game initialization from the `sumbit` event handler.
 
-All the C++ sources are in `src`. The `res` directory contains HTML layout, CSS stylesheet and UI script. The script implements main menu, generates the visible representation of game board and manages events.
+All the C++ sources are in `src` and `test`. The `res` directory contains HTML layout, CSS stylesheet and UI script. The script implements main menu, generates the visible representation of game board and manages events.
 
 ## Notes
 
-The AI we implement using the well known MinMax algorithms has some limitations. The time and memory complexity of precomputing all possible games would be *O((N * N)!)*, so we limit the number of game tree nodes by a constant. In consequence, the accuracy of predicting the best move decreases with increasing *N*.
+The AI we implement using the well known MinMax algorithm has some limitations. The time and memory complexity of precomputing all possible games would be *O((N * N)!)*, so we limit the number of game tree nodes by a constant. In consequence, the accuracy of predicting the best move decreases with increasing *N*.
 
 What sometimes happens (especially if *K* is a lot smaller than *N*) is that the `MinMaxPlayer` prefers moves that help him but he does not play defensively at all. This is caused by the incomplete prediction and non-locality of moves. If the human counterpart places his marks in the lower right corner, chances are the game tree will not reach that area of the board, because AI generates all possible next moves from left-top to right-bottom every time.
 
-We tried to address that problem by generating the game tree nodes in BFS order which should better approximate the idea of looking at *M* moves ahead instead of going in DFS order at the very end of only one possible string of moves, potentially depleting the maximum number of allowed nodes in memory before exploring the neighboring cells from the current move.
+We tried to address that problem by generating the game tree nodes in BFS order which should better approximate the idea of looking at *M* moves ahead instead of going in DFS order to the very end of only one possible string of moves, potentially depleting the maximum number of allowed nodes in memory before exploring the neighboring cells relative to the current move.
 
 This works in some cases but it would probably help to search neighboring cells (relative to the last move) first, instead of always going from left-top to right-bottom (as mentioned above).
