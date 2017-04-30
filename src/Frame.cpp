@@ -11,7 +11,14 @@
 
 static RECT defaultRect = { 100, 100, 400, 400 };
 
-Frame::Frame() : window( SW_MAIN | SW_TITLEBAR | SW_CONTROLS | SW_ENABLE_DEBUG, defaultRect) {}
+Frame::Frame() : window( SW_MAIN | SW_TITLEBAR | SW_CONTROLS | SW_ENABLE_DEBUG, defaultRect) {
+    startGameLoop();
+}
+
+Frame::~Frame() {
+    endGameLoop();
+}
+
 
 void Frame::gameLoop() {
     std::function<bool()> job;

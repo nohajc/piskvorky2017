@@ -36,15 +36,16 @@ class Frame: public sciter::window {
         }
         gameCondVar.notify_one();
     }
+
+    bool startGameLoop();
+    bool endGameLoop();
 public:
     Frame();
-    bool startGameLoop();
+    ~Frame();
+
     sciter::value startGame(sciter::value n, sciter::value k, sciter::value first);
-    bool endGameLoop();
 
     BEGIN_FUNCTION_MAP
-    FUNCTION_0("startGameLoop", startGameLoop);
-    FUNCTION_0("endGameLoop", endGameLoop);
     FUNCTION_3("startGame", startGame);
     END_FUNCTION_MAP
 };

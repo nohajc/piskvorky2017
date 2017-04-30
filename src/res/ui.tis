@@ -121,8 +121,6 @@ function showMainMenu() {
 
 // html loaded - DOM ready
 self.ready = function() {
-    view.startGameLoop();
-
     $(form#gameOptionsForm).on("change", function() {
         this.value = { m: this.value.n };
         return true;
@@ -142,8 +140,4 @@ self.ready = function() {
     $(#backToMenu).on("click", ::showMainMenu());
 
     showMainMenu();
-}
-
-self.closing = function(reason) {
-    view.endGameLoop();
 }
